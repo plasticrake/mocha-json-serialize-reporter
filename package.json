@@ -1,0 +1,23 @@
+{
+  "name": "mocha-json-serialize-reporter",
+  "version": "0.0.1",
+  "description": "A JSON reporter for Mocha.js",
+  "keywords": [
+    "mocha",
+    "reporter"
+  ],
+  "homepage": "https://github.com/plasticrake/mocha-json-serialize-reporter#readme",
+  "bugs": {
+    "url": "https://github.com/plasticrake/mocha-json-serialize-reporter/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plasticrake/mocha-json-serialize-reporter.git"
+  },
+  "license": "MIT",
+  "author": "Patrick Seal",
+  "main": "/lib/index.js",
+  "scripts": {
+    "test": "mocha"
+  }
+}
