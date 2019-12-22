@@ -94,6 +94,7 @@ describe('JsonSerializeReporter', function() {
     var suites;
 
     function getSuites(suite, matchFn) {
+      if (suite == null || suite.suites == null) return null;
       var matchingSuites = [];
       suite.suites.forEach(function(s) {
         if (matchFn(s)) matchingSuites.push(s);
@@ -122,14 +123,17 @@ describe('JsonSerializeReporter', function() {
     var failures;
 
     function getTests(suite, matchFn) {
+      if (suite.tests == null) return null;
       var matchingTests = [];
       suite.tests.forEach(function(t) {
         if (matchFn(t)) matchingTests.push(t);
       });
 
-      suite.suites.forEach(function(s) {
-        Array.prototype.push.apply(matchingTests, getTests(s, matchFn));
-      });
+      if (suite.suites) {
+        suite.suites.forEach(function(s) {
+          Array.prototype.push.apply(matchingTests, getTests(s, matchFn));
+        });
+      }
 
       return matchingTests;
     }
@@ -210,12 +214,8 @@ describe('JsonSerializeReporter', function() {
 
     describe('suite (root)', function() {
       it('should not have tests or suites', function() {
-        expect(objOutput.suite)
-          .to.have.property('suites')
-          .with.lengthOf(0);
-        expect(objOutput.suite)
-          .to.have.property('tests')
-          .with.lengthOf(0);
+        expect(objOutput.suite).to.not.have.property('suites');
+        expect(objOutput.suite).to.not.have.property('tests');
       });
     });
 
