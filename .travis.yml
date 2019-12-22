@@ -8,6 +8,10 @@ env:
   - MOCHA_VERSION=5
   - MOCHA_VERSION=4
 jobs:
+  include:
+    # nyc is not supported on node v4
+    - node_js: 4
+      script: mocha
   exclude:
     - node_js: 4
       env: MOCHA_VERSION=6
