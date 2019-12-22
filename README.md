@@ -1,5 +1,11 @@
 # Mocha.js JSON Serialize Reporter
 
+[![NPM Version](https://img.shields.io/npm/v/mocha-json-serialize-reporter.svg)](https://www.npmjs.com/package/mocha-json-serialize-reporter)
+[![Build Status](https://travis-ci.com/plasticrake/mocha-json-serialize-reporter.svg?branch=master)](https://travis-ci.com/plasticrake/mocha-json-serialize-reporter)
+[![codecov](https://codecov.io/gh/plasticrake/mocha-json-serialize-reporter/branch/master/graph/badge.svg)](https://codecov.io/gh/plasticrake/mocha-json-serialize-reporter)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/plasticrake/mocha-json-serialize-reporter.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/plasticrake/mocha-json-serialize-reporter/alerts/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/plasticrake/mocha-json-serialize-reporter.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/plasticrake/mocha-json-serialize-reporter/context:javascript)
+
 A comprehensive JSON reporter for [Mocha.js](https://mochajs.org/)
 
 Differs from the built-in Mocha JSON reporter:
