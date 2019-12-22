@@ -2,9 +2,6 @@ language: node_js
 node_js:
   - 'node'
   - 'lts/*'
-  - '10'
-  - '8'
-  - '6'
   - '4'
 env:
   - MOCHA_VERSION=6
