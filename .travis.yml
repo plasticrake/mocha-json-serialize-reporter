@@ -13,10 +13,14 @@ jobs:
     - node_js: 4
       env: MOCHA_VERSION=5
       script: mocha
+      after_success: false
     - node_js: 4
       env: MOCHA_VERSION=4
       script: mocha
+      after_success: false
 cache: npm
 install:
   - npm install mocha@$MOCHA_VERSION
   - npm install
+after_success:
+  - npm run report-coverage
