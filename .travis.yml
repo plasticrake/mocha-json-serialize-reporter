@@ -2,7 +2,6 @@ language: node_js
 node_js:
   - 'node'
   - 'lts/*'
-  - '4'
 env:
   - MOCHA_VERSION=6
   - MOCHA_VERSION=5
@@ -10,11 +9,13 @@ env:
 jobs:
   include:
     # nyc is not supported on node v4
+    # mocha v6 does not run on node v4
     - node_js: 4
+      env: MOCHA_VERSION=5
       script: mocha
-  exclude:
     - node_js: 4
-      env: MOCHA_VERSION=6
+      env: MOCHA_VERSION=4
+      script: mocha
 cache: npm
 install:
   - npm install mocha@$MOCHA_VERSION
