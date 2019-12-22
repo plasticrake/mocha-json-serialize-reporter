@@ -7,13 +7,14 @@ node_js:
   - '6'
   - '4'
 env:
-  - MOCHA_VERSION=4
-  - MOCHA_VERSION=5
   - MOCHA_VERSION=6
+  - MOCHA_VERSION=5
+  - MOCHA_VERSION=4
 jobs:
   exclude:
     - node_js: 4
       env: MOCHA_VERSION=6
+cache: npm
 install:
   - npm install mocha@$MOCHA_VERSION
   - npm install
