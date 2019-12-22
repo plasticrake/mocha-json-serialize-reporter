@@ -1,11 +1,19 @@
 language: node_js
 node_js:
-  - "node"
-  - "lts/*"
-  - "10"
-  - "8"
-  - "6"
-  - "4"
-cache:
-  directories:
-    - "node_modules"
+  - 'node'
+  - 'lts/*'
+  - '10'
+  - '8'
+  - '6'
+  - '4'
+env:
+  - MOCHA_VERSION=4
+  - MOCHA_VERSION=5
+  - MOCHA_VERSION=6
+jobs:
+  exclude:
+    - node_js: 4
+      env: MOCHA_VERSION=6
+install:
+  - npm install mocha@$MOCHA_VERSION
+  - npm install
