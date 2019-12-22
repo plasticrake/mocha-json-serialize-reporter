@@ -1,4 +1,5 @@
 .nyc_output
 .vscode
 coverage
+coverage.lcov
 node_modules

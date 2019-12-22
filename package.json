@@ -23,10 +23,12 @@
   "main": "lib/json-serialize-reporter.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "nyc mocha"
+    "test": "nyc mocha",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "codecov": "^3.6.1",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.7.0",
