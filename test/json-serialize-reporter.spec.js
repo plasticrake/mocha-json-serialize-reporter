@@ -7,8 +7,8 @@ var sinon = require('sinon');
 
 var JsonSerializeReporter = require('../lib/json-serialize-reporter');
 
-var STATE_FAILED = Mocha.Runnable.constants.STATE_FAILED;
-var STATE_PASSED = Mocha.Runnable.constants.STATE_PASSED;
+var STATE_FAILED = 'failed';
+var STATE_PASSED = 'passed';
 
 describe('JsonSerializeReporter', function() {
   var stdout;
