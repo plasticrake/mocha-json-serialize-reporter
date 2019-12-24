@@ -14,6 +14,12 @@ describe('suite one', function() {
     throw new Error('FAIL');
   });
 
+  it('test that fails with circular Error', function() {
+    var err = new Error('FAIL');
+    err.self = err;
+    throw err;
+  });
+
   it('test that is skipped', function() {
     this.skip();
   });

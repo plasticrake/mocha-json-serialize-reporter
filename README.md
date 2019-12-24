@@ -17,13 +17,19 @@ Differs from the built-in Mocha JSON reporter:
 
 1. Add to your project
 
-```base
+```bash
 npm install --save-dev mocha-json-serialize-reporter
+```
+
+or globally
+
+```bash
+npm install --global mocha-json-serialize-reporter
 ```
 
 2. Tell mocha to use it:
 
-```base
+```bash
 mocha testfile.js --reporter mocha-json-serialize-reporter
 ```
 
@@ -33,6 +39,18 @@ mocha testfile.js --reporter mocha-json-serialize-reporter
 var mocha = new Mocha({
   reporter: 'mocha-json-serialize-reporter',
 });
+```
+
+### Options
+
+- `stats` \[boolean\] \[default: true\] include stats in output.
+- `space` \[number\] \[default: 2\] `JSON.stringify` space parameter.
+- `replacer` \[Function\] \[default: null\] `JSON.stringify` replacer function. This is only usable programatically, not via command line.
+
+Example:
+
+```bash
+mocha testfile.js --reporter mocha-json-serialize-reporter -O stats=false -O space=0
 ```
 
 ## Output
