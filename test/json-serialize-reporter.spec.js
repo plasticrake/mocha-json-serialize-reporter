@@ -1,5 +1,5 @@
-/* globals process */
-/* eslint-disable no-unused-expressions */
+/* globals process setTimeout */
+/* eslint-disable no-shadow, no-unused-expressions */
 
 var expect = require('chai').expect;
 var Mocha = require('mocha');
@@ -10,43 +10,59 @@ var JsonSerializeReporter = require('../lib/json-serialize-reporter');
 var STATE_FAILED = 'failed';
 var STATE_PASSED = 'passed';
 
+function dateReviver(key, value) {
+  if (key === 'end' || key === 'start') {
+    return new Date(value);
+  }
+  return value;
+}
+
+function runReporter(reporterOptions, files, fn) {
+  var mocha = new Mocha();
+  mocha.reporter(JsonSerializeReporter, reporterOptions);
+
+  if (files && files.length > 0) {
+    files.forEach(function(file) {
+      delete require.cache[require.resolve(file)];
+      mocha.addFile('./test' + file.substring(1));
+    });
+  }
+
+  var stdout = [];
+  sinon.stub(process.stdout, 'write').callsFake(function(o) {
+    stdout.push(o);
+  });
+
+  try {
+    var runner = mocha.run(function() {
+      sinon.restore();
+      var jsonOutput = stdout.join('\n');
+
+      setTimeout(function() {
+        // setTimeout used so runner will have a value
+        fn({
+          runner: runner,
+          jsonOutput: jsonOutput,
+          objOutput: JSON.parse(jsonOutput, dateReviver),
+        });
+      }, 0);
+    });
+  } catch (err) {
+    sinon.restore();
+    throw err;
+  }
+}
+
 describe('JsonSerializeReporter', function() {
-  var stdout;
   var runner;
-  var jsonOutput;
   var objOutput;
 
-  var gather = function gather(chunk) {
-    stdout.push(chunk);
-  };
-
-  var dateReviver = function dateReviver(key, value) {
-    if (key === 'end' || key === 'start') {
-      return new Date(value);
-    }
-    return value;
-  };
-
   beforeEach(function(done) {
-    var mocha = new Mocha();
-    mocha.reporter(JsonSerializeReporter);
-
-    delete require.cache[require.resolve('./fixtures/mocha-test.fixture.js')];
-    mocha.addFile('./test/fixtures/mocha-test.fixture.js');
-
-    stdout = [];
-    sinon.stub(process.stdout, 'write').callsFake(gather);
-    try {
-      runner = mocha.run(function() {
-        sinon.restore();
-        jsonOutput = stdout.join('\n');
-        objOutput = JSON.parse(jsonOutput, dateReviver);
-
-        done();
-      });
-    } catch (e) {
-      sinon.restore();
-    }
+    runReporter({}, ['./fixtures/mocha-test.fixture.js'], function(out) {
+      runner = out.runner;
+      objOutput = out.objOutput;
+      done();
+    });
   });
 
   it('should have output', function() {
@@ -88,6 +104,101 @@ describe('JsonSerializeReporter', function() {
     expect(objOutput.suite)
       .to.have.property('title')
       .that.is.a('string');
+  });
+
+  describe('options', function() {
+    describe('stats', function() {
+      it('should include stats by default', function(done) {
+        runReporter(undefined, [], function(out) {
+          expect(out.objOutput).to.have.property('stats').and.to.exist;
+          done();
+        });
+      });
+
+      it('should include stats when stats is true', function(done) {
+        runReporter({ stats: true }, [], function(out) {
+          expect(out.objOutput).to.have.property('stats').and.to.exist;
+          done();
+        });
+      });
+
+      ['true', 'yes', 'on', '1', 'literally anything else'].forEach(function(
+        val
+      ) {
+        it('should include stats when stats is "' + val + '"', function(done) {
+          runReporter({ stats: val }, [], function(out) {
+            expect(out.objOutput).to.have.property('stats').and.to.exist;
+            done();
+          });
+        });
+      });
+
+      it('should not have stats when stats is false', function(done) {
+        runReporter({ stats: false }, [], function(out) {
+          expect(out.objOutput).to.not.have.property('stats');
+          done();
+        });
+      });
+
+      ['false', 'no', 'off', '0'].forEach(function(val) {
+        it('should not have stats when stats is "' + val + '"', function(done) {
+          runReporter({ stats: val }, [], function(out) {
+            expect(out.objOutput).to.not.have.property('stats');
+            done();
+          });
+        });
+      });
+    });
+
+    describe('space', function() {
+      it('should default to 2', function(done) {
+        runReporter(undefined, [], function(out) {
+          expect(out.jsonOutput).to.contain(
+            '{\n  "suite": {\n    "title": "",\n'
+          );
+          done();
+        });
+      });
+
+      it('should default to 2 with an invalid number', function(done) {
+        runReporter({ space: 'INVALID' }, [], function(out) {
+          expect(out.jsonOutput).to.contain(
+            '{\n  "suite": {\n    "title": "",\n'
+          );
+          done();
+        });
+      });
+
+      it('should allow overrides', function(done) {
+        runReporter({ space: 0 }, [], function(out) {
+          expect(out.jsonOutput).to.match(/{"suite":{"title":""/);
+          done();
+        });
+      });
+    });
+
+    describe('replacer', function() {
+      it('should allow overrides', function(done) {
+        var replacer = function(key, value) {
+          if (key === 'stats') {
+            return 'OVERRIDE';
+          }
+          return value;
+        };
+        runReporter({ replacer: replacer }, [], function(out) {
+          expect(out.objOutput.stats).to.eql('OVERRIDE');
+          done();
+        });
+      });
+
+      [99, new Date(), 'not a function', {}].forEach(function(val) {
+        it('should ignore non-functions: "' + val + '"', function(done) {
+          runReporter({ replacer: val }, [], function() {
+            done();
+          });
+        });
+      });
+    });
   });
 
   describe('suites', function() {
@@ -178,23 +289,13 @@ describe('JsonSerializeReporter', function() {
   });
 
   describe('No Tests', function() {
-    // eslint-disable-next-line no-shadow
     var runner;
-    // eslint-disable-next-line no-shadow
-    var jsonOutput;
-    // eslint-disable-next-line no-shadow
     var objOutput;
 
     before(function(done) {
-      var mocha = new Mocha();
-      mocha.reporter(JsonSerializeReporter);
-
-      stdout = [];
-      sinon.stub(process.stdout, 'write').callsFake(gather);
-      runner = mocha.run(function() {
-        sinon.restore();
-        jsonOutput = stdout.join('\n');
-        objOutput = JSON.parse(jsonOutput, dateReviver);
+      runReporter({}, [], function(out) {
+        runner = out.runner;
+        objOutput = out.objOutput;
         done();
       });
     });
