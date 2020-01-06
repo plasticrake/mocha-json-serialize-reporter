@@ -40,10 +40,17 @@ function runReporter(reporterOptions, files, fn) {
 
       setTimeout(function() {
         // setTimeout used so runner will have a value
+        var objOutput;
+        try {
+          objOutput = JSON.parse(jsonOutput, dateReviver);
+        } catch (err) {
+          objOutput = String(err);
+        }
+
         fn({
           runner: runner,
           jsonOutput: jsonOutput,
-          objOutput: JSON.parse(jsonOutput, dateReviver),
+          objOutput: objOutput,
         });
       }, 0);
     });
