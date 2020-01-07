@@ -17,25 +17,12 @@ Differs from the built-in Mocha JSON reporter:
 
 ## Usage
 
-1. Add to your project
+1. Add to your project: `npm install --save-dev mocha-json-serialize-reporter`</br>
+   or globally: `npm install --global mocha-json-serialize-reporter`
 
-```bash
-npm install --save-dev mocha-json-serialize-reporter
-```
+2. Tell mocha to use it: `mocha test_file.js --reporter mocha-json-serialize-reporter`
 
-or globally
-
-```bash
-npm install --global mocha-json-serialize-reporter
-```
-
-2. Tell mocha to use it:
-
-```bash
-mocha testfile.js --reporter mocha-json-serialize-reporter
-```
-
-3. If using mocha programatically:
+3. If using mocha programmatically:
 
 ```js
 var mocha = new Mocha({
@@ -47,7 +34,7 @@ var mocha = new Mocha({
 
 - `stats` \[boolean\] \[default: true\] include stats in output.
 - `space` \[number\] \[default: 2\] `JSON.stringify` space parameter.
-- `replacer` \[Function\] \[default: null\] `JSON.stringify` replacer function. This is only usable programatically, not via command line.
+- `replacer` \[Function\] \[default: null\] `JSON.stringify` replacer function. This is only usable programmatically, not via command line.
 
 Example:
 
@@ -84,7 +71,7 @@ mocha testfile.js --reporter mocha-json-serialize-reporter -O stats=false -O spa
         "timedOut": false,
         "pending": false,
         "type": "test",
-        "file": "/Users/plasticrake/Code/mocha-json-serialize-reporter/test/fixtures/mocha-test-simple.fixture.js",
+        "file": "/fixtures/mocha-test-simple.fixture.js",
         "duration": 0,
         "state": "passed",
         "speed": "fast",
@@ -100,7 +87,7 @@ mocha testfile.js --reporter mocha-json-serialize-reporter -O stats=false -O spa
         "title": "suite one",
         "pending": false,
         "root": false,
-        "file": "/Users/plasticrake/Code/mocha-json-serialize-reporter/test/fixtures/mocha-test-simple.fixture.js",
+        "file": "/fixtures/mocha-test-simple.fixture.js",
         "timeout": 2000,
         "slow": 75,
         "retries": -1,
@@ -112,7 +99,7 @@ mocha testfile.js --reporter mocha-json-serialize-reporter -O stats=false -O spa
             "timedOut": false,
             "pending": false,
             "type": "test",
-            "file": "/Users/plasticrake/Code/mocha-json-serialize-reporter/test/fixtures/mocha-test-simple.fixture.js",
+            "file": "/fixtures/mocha-test-simple.fixture.js",
             "duration": 0,
             "state": "passed",
             "speed": "fast",
@@ -128,7 +115,7 @@ mocha testfile.js --reporter mocha-json-serialize-reporter -O stats=false -O spa
             "timedOut": false,
             "pending": false,
             "type": "test",
-            "file": "/Users/plasticrake/Code/mocha-json-serialize-reporter/test/fixtures/mocha-test-simple.fixture.js",
+            "file": "/fixtures/mocha-test-simple.fixture.js",
             "duration": 0,
             "state": "failed",
             "timeout": 2000,
@@ -148,7 +135,7 @@ mocha testfile.js --reporter mocha-json-serialize-reporter -O stats=false -O spa
             "timedOut": false,
             "pending": true,
             "type": "test",
-            "file": "/Users/plasticrake/Code/mocha-json-serialize-reporter/test/fixtures/mocha-test-simple.fixture.js",
+            "file": "/fixtures/mocha-test-simple.fixture.js",
             "duration": 0,
             "timeout": 2000,
             "slow": 75,
