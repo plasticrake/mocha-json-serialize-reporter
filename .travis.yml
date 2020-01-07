@@ -3,12 +3,13 @@ node_js:
   - 'node'
   - 'lts/*'
 env:
+  - MOCHA_VERSION=7
   - MOCHA_VERSION=6
   - MOCHA_VERSION=5
   - MOCHA_VERSION=4
 jobs:
   include:
-    # nyc is not supported on node v4
+    # nyc is not supported on node < v8
     # mocha v6 does not run on node v4
     - node_js: 4
       env: MOCHA_VERSION=5
