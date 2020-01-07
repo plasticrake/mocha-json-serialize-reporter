@@ -1,5 +1,6 @@
 /* globals process setTimeout */
 /* eslint-disable no-shadow, no-unused-expressions */
+/* eslint no-underscore-dangle: ["error", { "allow": ["_beforeEach", "_beforeAll", "_afterEach", "_afterAll"] }] */
 
 var expect = require('chai').expect;
 var Mocha = require('mocha');
@@ -9,6 +10,24 @@ var JsonSerializeReporter = require('../lib/json-serialize-reporter');
 
 var STATE_FAILED = 'failed';
 var STATE_PASSED = 'passed';
+
+function getTests(suite, matchFn) {
+  var matchingTests = [];
+
+  if (suite.tests != null) {
+    suite.tests.forEach(function(t) {
+      if (matchFn(t)) matchingTests.push(t);
+    });
+  }
+
+  if (suite.suites != null) {
+    suite.suites.forEach(function(s) {
+      Array.prototype.push.apply(matchingTests, getTests(s, matchFn));
+    });
+  }
+
+  return matchingTests;
+}
 
 function dateReviver(key, value) {
   if (key === 'end' || key === 'start') {
@@ -69,6 +88,81 @@ describe('JsonSerializeReporter', function() {
       runner = out.runner;
       objOutput = out.objOutput;
       done();
+    });
+  });
+
+  describe('hooks', function() {
+    var suiteWithBeforeEachHook;
+    var suiteWithBeforeHook;
+    var suiteWithAfterEachHook;
+    var suiteWithAfterHook;
+
+    var suiteWithFailingBeforeEachHook;
+    var suiteWithFailingBeforeHook;
+    var suiteWithFailingAfterEachHook;
+    var suiteWithFailingAfterHook;
+
+    beforeEach(function(done) {
+      runReporter({}, ['./fixtures/mocha-test-hooks.fixture.js'], function(
+        out
+      ) {
+        runner = out.runner;
+
+        suiteWithBeforeEachHook = out.objOutput.suite.suites[0];
+        suiteWithBeforeHook = out.objOutput.suite.suites[1];
+        suiteWithAfterEachHook = out.objOutput.suite.suites[2];
+        suiteWithAfterHook = out.objOutput.suite.suites[3];
+
+        suiteWithFailingBeforeEachHook = out.objOutput.suite.suites[4];
+        suiteWithFailingBeforeHook = out.objOutput.suite.suites[5];
+        suiteWithFailingAfterEachHook = out.objOutput.suite.suites[6];
+        suiteWithFailingAfterHook = out.objOutput.suite.suites[7];
+
+        done();
+      });
+    });
+
+    it('should have output', function() {
+      expect(suiteWithBeforeHook).to.exist;
+      expect(suiteWithBeforeEachHook).to.exist;
+    });
+
+    it('should have hooks', function() {
+      expect(suiteWithBeforeEachHook)
+        .to.have.property('_beforeEach')
+        .with.lengthOf(1);
+      expect(suiteWithBeforeHook)
+        .to.have.property('_beforeAll')
+        .with.lengthOf(1);
+      expect(suiteWithAfterEachHook)
+        .to.have.property('_afterEach')
+        .with.lengthOf(1);
+      expect(suiteWithAfterHook)
+        .to.have.property('_afterAll')
+        .with.lengthOf(1);
+      expect(suiteWithFailingBeforeEachHook)
+        .to.have.property('_beforeEach')
+        .with.lengthOf(1);
+      expect(suiteWithFailingBeforeHook)
+        .to.have.property('_beforeAll')
+        .with.lengthOf(1);
+      expect(suiteWithFailingAfterEachHook)
+        .to.have.property('_afterEach')
+        .with.lengthOf(1);
+      expect(suiteWithFailingAfterHook)
+        .to.have.property('_afterAll')
+        .with.lengthOf(1);
+    });
+
+    it('failures should have originalTitle', function() {
+      [
+        suiteWithFailingBeforeEachHook._beforeEach[0],
+        suiteWithFailingBeforeHook._beforeAll[0],
+        suiteWithFailingAfterEachHook._afterEach[0],
+        suiteWithFailingAfterHook._afterAll[0],
+      ].forEach(function(hook, i) {
+        expect(hook, String(i)).to.have.property('originalTitle');
+      });
     });
   });
 
@@ -211,20 +305,34 @@ describe('JsonSerializeReporter', function() {
   describe('suites', function() {
     var suites;
 
-    function getSuites(suite, matchFn) {
-      if (suite == null || suite.suites == null) return null;
+    function getSuites(suites, matchFn) {
       var matchingSuites = [];
-      suite.suites.forEach(function(s) {
-        if (matchFn(s)) matchingSuites.push(s);
-        Array.prototype.push.apply(matchingSuites, getSuites(s, matchFn));
+
+      suites.forEach(function(suite) {
+        if (suite == null) return;
+
+        if (matchFn(suite)) matchingSuites.push(suite);
+
+        if (suite.suites != null) {
+          Array.prototype.push.apply(
+            matchingSuites,
+            getSuites(suite.suites, matchFn)
+          );
+        }
       });
+
       return matchingSuites;
     }
 
     before(function() {
       // root suite and empty suites are not counted in stats
-      suites = getSuites(objOutput.suite, function(s) {
-        return s.tests && s.tests.length > 0;
+      suites = getSuites(objOutput.suite.suites, function(s) {
+        // walk the tree and see if we find a test
+        return (
+          getTests(s, function() {
+            return true;
+          }).length > 0
+        );
       });
     });
 
@@ -240,25 +348,10 @@ describe('JsonSerializeReporter', function() {
     var pending;
     var failures;
 
-    function getTests(suite, matchFn) {
-      if (suite.tests == null) return null;
-      var matchingTests = [];
-      suite.tests.forEach(function(t) {
-        if (matchFn(t)) matchingTests.push(t);
-      });
-
-      if (suite.suites) {
-        suite.suites.forEach(function(s) {
-          Array.prototype.push.apply(matchingTests, getTests(s, matchFn));
-        });
-      }
-
-      return matchingTests;
-    }
-
     before(function() {
-      tests = getTests(objOutput.suite, function() {
-        return true;
+      tests = getTests(objOutput.suite, function(test) {
+        // excludes tests that were not run due to hook failures
+        return test.state != null || test.pending;
       });
       passes = getTests(objOutput.suite, function(test) {
         return test.state === STATE_PASSED;
@@ -271,13 +364,21 @@ describe('JsonSerializeReporter', function() {
       });
     });
 
-    it('should match stats', function() {
-      var stats = objOutput.stats;
-      expect(tests).lengthOf(stats.tests);
-      expect(passes).lengthOf(stats.passes);
-      expect(pending).lengthOf(stats.pending);
-      expect(tests).lengthOf(stats.tests);
-      expect(failures).lengthOf(stats.failures);
+    it('should match stats: tests', function() {
+      expect(tests).lengthOf(objOutput.stats.tests);
+    });
+
+    it('should match stats: passes', function() {
+      expect(passes).lengthOf(objOutput.stats.passes);
+    });
+
+    it('should match stats: pending', function() {
+      expect(pending).lengthOf(objOutput.stats.pending);
+    });
+
+    it('should have 10 failures', function() {
+      // This won't match stats when suites have failing hooks
+      expect(failures).lengthOf(10);
     });
 
     describe('failures', function() {
