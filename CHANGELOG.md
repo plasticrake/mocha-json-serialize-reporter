@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/plasticrake/mocha-json-serialize-reporter/compare/v1.1.1...v1.2.0) (2020-01-07)
+
+
+### Features
+
+* add support for failed hooks ([24974a3](https://github.com/plasticrake/mocha-json-serialize-reporter/commit/24974a3c958f6e92ade638f30fbfea6abef5a6d0))
+
 ### [1.1.1](https://github.com/plasticrake/mocha-json-serialize-reporter/compare/v1.1.0...v1.1.1) (2020-01-03)
 
 
