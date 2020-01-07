@@ -154,7 +154,16 @@ describe('JsonSerializeReporter', function() {
         .with.lengthOf(1);
     });
 
-    it('failures should have originalTitle', function() {
+    it('failures should have originalTitle (Mocha >= v6)', function() {
+      if (
+        !(
+          Mocha.prototype.version &&
+          Number(Mocha.prototype.version.substring(0, 1)) >= 6
+        )
+      ) {
+        this.skip();
+      }
+
       [
         suiteWithFailingBeforeEachHook._beforeEach[0],
         suiteWithFailingBeforeHook._beforeAll[0],
