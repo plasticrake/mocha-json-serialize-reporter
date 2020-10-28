@@ -15,13 +15,13 @@ function getTests(suite, matchFn) {
   var matchingTests = [];
 
   if (suite.tests != null) {
-    suite.tests.forEach(function(t) {
+    suite.tests.forEach(function (t) {
       if (matchFn(t)) matchingTests.push(t);
     });
   }
 
   if (suite.suites != null) {
-    suite.suites.forEach(function(s) {
+    suite.suites.forEach(function (s) {
       Array.prototype.push.apply(matchingTests, getTests(s, matchFn));
     });
   }
@@ -41,23 +41,23 @@ function runReporter(reporterOptions, files, fn) {
   mocha.reporter(JsonSerializeReporter, reporterOptions);
 
   if (files && files.length > 0) {
-    files.forEach(function(file) {
+    files.forEach(function (file) {
       delete require.cache[require.resolve(file)];
       mocha.addFile('./test' + file.substring(1));
     });
   }
 
   var stdout = [];
-  sinon.stub(process.stdout, 'write').callsFake(function(o) {
+  sinon.stub(process.stdout, 'write').callsFake(function (o) {
     stdout.push(o);
   });
 
   try {
-    var runner = mocha.run(function() {
+    var runner = mocha.run(function () {
       sinon.restore();
       var jsonOutput = stdout.join('\n');
 
-      setTimeout(function() {
+      setTimeout(function () {
         // setTimeout used so runner will have a value
         var objOutput;
         try {
@@ -79,19 +79,19 @@ function runReporter(reporterOptions, files, fn) {
   }
 }
 
-describe('JsonSerializeReporter', function() {
+describe('JsonSerializeReporter', function () {
   var runner;
   var objOutput;
 
-  beforeEach(function(done) {
-    runReporter({}, ['./fixtures/mocha-test.fixture.js'], function(out) {
+  beforeEach(function (done) {
+    runReporter({}, ['./fixtures/mocha-test.fixture.js'], function (out) {
       runner = out.runner;
       objOutput = out.objOutput;
       done();
     });
   });
 
-  describe('hooks', function() {
+  describe('hooks', function () {
     var suiteWithBeforeEachHook;
     var suiteWithBeforeHook;
     var suiteWithAfterEachHook;
@@ -102,8 +102,8 @@ describe('JsonSerializeReporter', function() {
     var suiteWithFailingAfterEachHook;
     var suiteWithFailingAfterHook;
 
-    beforeEach(function(done) {
-      runReporter({}, ['./fixtures/mocha-test-hooks.fixture.js'], function(
+    beforeEach(function (done) {
+      runReporter({}, ['./fixtures/mocha-test-hooks.fixture.js'], function (
         out
       ) {
         runner = out.runner;
@@ -122,12 +122,12 @@ describe('JsonSerializeReporter', function() {
       });
     });
 
-    it('should have output', function() {
+    it('should have output', function () {
       expect(suiteWithBeforeHook).to.exist;
       expect(suiteWithBeforeEachHook).to.exist;
     });
 
-    it('should have hooks', function() {
+    it('should have hooks', function () {
       expect(suiteWithBeforeEachHook)
         .to.have.property('_beforeEach')
         .with.lengthOf(1);
@@ -137,9 +137,7 @@ describe('JsonSerializeReporter', function() {
       expect(suiteWithAfterEachHook)
         .to.have.property('_afterEach')
         .with.lengthOf(1);
-      expect(suiteWithAfterHook)
-        .to.have.property('_afterAll')
-        .with.lengthOf(1);
+      expect(suiteWithAfterHook).to.have.property('_afterAll').with.lengthOf(1);
       expect(suiteWithFailingBeforeEachHook)
         .to.have.property('_beforeEach')
         .with.lengthOf(1);
@@ -154,7 +152,7 @@ describe('JsonSerializeReporter', function() {
         .with.lengthOf(1);
     });
 
-    it('failures should have originalTitle (Mocha >= v6)', function() {
+    it('failures should have originalTitle (Mocha >= v6)', function () {
       if (
         !(
           Mocha.prototype.version &&
@@ -169,90 +167,74 @@ describe('JsonSerializeReporter', function() {
         suiteWithFailingBeforeHook._beforeAll[0],
         suiteWithFailingAfterEachHook._afterEach[0],
         suiteWithFailingAfterHook._afterAll[0],
-      ].forEach(function(hook, i) {
+      ].forEach(function (hook, i) {
         expect(hook, String(i)).to.have.property('originalTitle');
       });
     });
   });
 
-  it('should have output', function() {
+  it('should have output', function () {
     expect(objOutput).to.exist;
   });
 
-  it('should have stats', function() {
+  it('should have stats', function () {
     var stats = objOutput.stats;
     expect(objOutput).to.have.property('stats');
-    expect(stats)
-      .to.have.property('suites')
-      .is.a('number');
-    expect(stats)
-      .to.have.property('tests')
-      .is.a('number');
-    expect(stats)
-      .to.have.property('passes')
-      .is.a('number');
-    expect(stats)
-      .to.have.property('pending')
-      .is.a('number');
-    expect(stats)
-      .to.have.property('failures')
-      .is.a('number');
-    expect(stats)
-      .to.have.property('start')
-      .is.a('date');
-    expect(stats)
-      .to.have.property('end')
-      .is.a('date');
-    expect(stats)
-      .to.have.property('duration')
-      .is.a('number');
+    expect(stats).to.have.property('suites').is.a('number');
+    expect(stats).to.have.property('tests').is.a('number');
+    expect(stats).to.have.property('passes').is.a('number');
+    expect(stats).to.have.property('pending').is.a('number');
+    expect(stats).to.have.property('failures').is.a('number');
+    expect(stats).to.have.property('start').is.a('date');
+    expect(stats).to.have.property('end').is.a('date');
+    expect(stats).to.have.property('duration').is.a('number');
   });
 
-  it('should have a suite (root)', function() {
+  it('should have a suite (root)', function () {
     expect(objOutput).to.have.property('suite');
     expect(objOutput.suite).to.have.property('root', true);
-    expect(objOutput.suite)
-      .to.have.property('title')
-      .that.is.a('string');
+    expect(objOutput.suite).to.have.property('title').that.is.a('string');
   });
 
-  describe('options', function() {
-    describe('stats', function() {
-      it('should include stats by default', function(done) {
-        runReporter(undefined, [], function(out) {
+  describe('options', function () {
+    describe('stats', function () {
+      it('should include stats by default', function (done) {
+        runReporter(undefined, [], function (out) {
           expect(out.objOutput).to.have.property('stats').and.to.exist;
           done();
         });
       });
 
-      it('should include stats when stats is true', function(done) {
-        runReporter({ stats: true }, [], function(out) {
+      it('should include stats when stats is true', function (done) {
+        runReporter({ stats: true }, [], function (out) {
           expect(out.objOutput).to.have.property('stats').and.to.exist;
           done();
         });
       });
 
-      ['true', 'yes', 'on', '1', 'literally anything else'].forEach(function(
+      ['true', 'yes', 'on', '1', 'literally anything else'].forEach(function (
         val
       ) {
-        it('should include stats when stats is "' + val + '"', function(done) {
-          runReporter({ stats: val }, [], function(out) {
+        it('should include stats when stats is "' + val + '"', function (done) {
+          runReporter({ stats: val }, [], function (out) {
             expect(out.objOutput).to.have.property('stats').and.to.exist;
             done();
           });
         });
       });
 
-      it('should not have stats when stats is false', function(done) {
-        runReporter({ stats: false }, [], function(out) {
+      it('should not have stats when stats is false', function (done) {
+        runReporter({ stats: false }, [], function (out) {
           expect(out.objOutput).to.not.have.property('stats');
           done();
         });
       });
 
-      ['false', 'no', 'off', '0'].forEach(function(val) {
-        it('should not have stats when stats is "' + val + '"', function(done) {
-          runReporter({ stats: val }, [], function(out) {
+      ['false', 'no', 'off', '0'].forEach(function (val) {
+        it('should not have stats when stats is "' + val + '"', function (
+          done
+        ) {
+          runReporter({ stats: val }, [], function (out) {
             expect(out.objOutput).to.not.have.property('stats');
             done();
           });
@@ -260,9 +242,9 @@ describe('JsonSerializeReporter', function() {
       });
     });
 
-    describe('space', function() {
-      it('should default to 2', function(done) {
-        runReporter(undefined, [], function(out) {
+    describe('space', function () {
+      it('should default to 2', function (done) {
+        runReporter(undefined, [], function (out) {
           expect(out.jsonOutput).to.contain(
             '{\n  "suite": {\n    "title": "",\n'
           );
@@ -270,8 +252,8 @@ describe('JsonSerializeReporter', function() {
         });
       });
 
-      it('should default to 2 with an invalid number', function(done) {
-        runReporter({ space: 'INVALID' }, [], function(out) {
+      it('should default to 2 with an invalid number', function (done) {
+        runReporter({ space: 'INVALID' }, [], function (out) {
           expect(out.jsonOutput).to.contain(
             '{\n  "suite": {\n    "title": "",\n'
           );
@@ -279,31 +261,31 @@ describe('JsonSerializeReporter', function() {
         });
       });
 
-      it('should allow overrides', function(done) {
-        runReporter({ space: 0 }, [], function(out) {
+      it('should allow overrides', function (done) {
+        runReporter({ space: 0 }, [], function (out) {
           expect(out.jsonOutput).to.match(/{"suite":{"title":""/);
           done();
         });
       });
     });
 
-    describe('replacer', function() {
-      it('should allow overrides', function(done) {
-        var replacer = function(key, value) {
+    describe('replacer', function () {
+      it('should allow overrides', function (done) {
+        var replacer = function (key, value) {
           if (key === 'stats') {
             return 'OVERRIDE';
           }
           return value;
         };
-        runReporter({ replacer: replacer }, [], function(out) {
+        runReporter({ replacer: replacer }, [], function (out) {
           expect(out.objOutput.stats).to.eql('OVERRIDE');
           done();
         });
       });
 
-      [99, new Date(), 'not a function', {}].forEach(function(val) {
-        it('should ignore non-functions: "' + val + '"', function(done) {
-          runReporter({ replacer: val }, [], function() {
+      [99, new Date(), 'not a function', {}].forEach(function (val) {
+        it('should ignore non-functions: "' + val + '"', function (done) {
+          runReporter({ replacer: val }, [], function () {
             done();
           });
         });
@@ -311,13 +293,13 @@ describe('JsonSerializeReporter', function() {
     });
   });
 
-  describe('suites', function() {
+  describe('suites', function () {
     var suites;
 
     function getSuites(suites, matchFn) {
       var matchingSuites = [];
 
-      suites.forEach(function(suite) {
+      suites.forEach(function (suite) {
         if (suite == null) return;
 
         if (matchFn(suite)) matchingSuites.push(suite);
@@ -333,112 +315,112 @@ describe('JsonSerializeReporter', function() {
       return matchingSuites;
     }
 
-    before(function() {
+    before(function () {
       // root suite and empty suites are not counted in stats
-      suites = getSuites(objOutput.suite.suites, function(s) {
+      suites = getSuites(objOutput.suite.suites, function (s) {
         // walk the tree and see if we find a test
         return (
-          getTests(s, function() {
+          getTests(s, function () {
             return true;
           }).length > 0
         );
       });
     });
 
-    it('should match stats', function() {
+    it('should match stats', function () {
       var stats = objOutput.stats;
       expect(suites).lengthOf(stats.suites);
     });
   });
 
-  describe('tests', function() {
+  describe('tests', function () {
     var tests;
     var passes;
     var pending;
     var failures;
 
-    before(function() {
-      tests = getTests(objOutput.suite, function(test) {
+    before(function () {
+      tests = getTests(objOutput.suite, function (test) {
         // excludes tests that were not run due to hook failures
         return test.state != null || test.pending;
       });
-      passes = getTests(objOutput.suite, function(test) {
+      passes = getTests(objOutput.suite, function (test) {
         return test.state === STATE_PASSED;
       });
-      pending = getTests(objOutput.suite, function(test) {
+      pending = getTests(objOutput.suite, function (test) {
         return test.pending;
       });
-      failures = getTests(objOutput.suite, function(test) {
+      failures = getTests(objOutput.suite, function (test) {
         return test.state === STATE_FAILED;
       });
     });
 
-    it('should match stats: tests', function() {
+    it('should match stats: tests', function () {
       expect(tests).lengthOf(objOutput.stats.tests);
     });
 
-    it('should match stats: passes', function() {
+    it('should match stats: passes', function () {
       expect(passes).lengthOf(objOutput.stats.passes);
     });
 
-    it('should match stats: pending', function() {
+    it('should match stats: pending', function () {
       expect(pending).lengthOf(objOutput.stats.pending);
     });
 
-    it('should have 10 failures', function() {
+    it('should have 10 failures', function () {
       // This won't match stats when suites have failing hooks
       expect(failures).lengthOf(10);
     });
 
-    describe('failures', function() {
-      it('should have err', function() {
-        failures.forEach(function(f) {
+    describe('failures', function () {
+      it('should have err', function () {
+        failures.forEach(function (f) {
           expect(f, f.title).to.have.property('err').that.exist;
         });
       });
     });
   });
 
-  describe('testResults', function() {
-    it('should match stdout JSON Output', function() {
+  describe('testResults', function () {
+    it('should match stdout JSON Output', function () {
       expect(runner.testResults).to.eql(objOutput);
     });
   });
 
-  describe('No Tests', function() {
+  describe('No Tests', function () {
     var runner;
     var objOutput;
 
-    before(function(done) {
-      runReporter({}, [], function(out) {
+    before(function (done) {
+      runReporter({}, [], function (out) {
         runner = out.runner;
         objOutput = out.objOutput;
         done();
       });
     });
 
-    it('should have output', function() {
+    it('should have output', function () {
       expect(objOutput).to.exist;
     });
 
-    it('should have stats', function() {
+    it('should have stats', function () {
       expect(objOutput).to.have.property('stats');
     });
 
-    it('should have a suite (root)', function() {
+    it('should have a suite (root)', function () {
       expect(objOutput).to.have.property('suite');
       expect(objOutput.suite).to.have.property('root', true);
     });
 
-    describe('suite (root)', function() {
-      it('should not have tests or suites', function() {
+    describe('suite (root)', function () {
+      it('should not have tests or suites', function () {
         expect(objOutput.suite).to.not.have.property('suites');
         expect(objOutput.suite).to.not.have.property('tests');
       });
     });
 
-    describe('testResults', function() {
-      it('should match stdout JSON output', function() {
+    describe('testResults', function () {
+      it('should match stdout JSON output', function () {
         expect(runner.testResults).to.eql(objOutput);
       });
     });
