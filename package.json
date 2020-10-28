@@ -17,10 +17,10 @@
   },
   "license": "MIT",
   "author": "Patrick Seal",
+  "main": "lib/json-serialize-reporter.js",
   "files": [
     "lib"
   ],
-  "main": "lib/json-serialize-reporter.js",
   "scripts": {
     "lint": "eslint .",
     "release": "standard-version --sign",
