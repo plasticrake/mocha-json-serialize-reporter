@@ -63,7 +63,6 @@ mocha testfile.js --reporter mocha-json-serialize-reporter -O stats=false -O spa
     "timeout": 2000,
     "slow": 75,
     "retries": -1,
-    "enableTimeouts": true,
     "tests": [
       {
         "title": "passing test in the root suite",
@@ -78,8 +77,7 @@ mocha testfile.js --reporter mocha-json-serialize-reporter -O stats=false -O spa
         "timeout": 2000,
         "slow": 75,
         "retries": -1,
-        "currentRetry": 0,
-        "enableTimeouts": true
+        "currentRetry": 0
       }
     ],
     "suites": [
@@ -91,7 +89,6 @@ mocha testfile.js --reporter mocha-json-serialize-reporter -O stats=false -O spa
         "timeout": 2000,
         "slow": 75,
         "retries": -1,
-        "enableTimeouts": true,
         "tests": [
           {
             "title": "passing test",
@@ -106,8 +103,7 @@ mocha testfile.js --reporter mocha-json-serialize-reporter -O stats=false -O spa
             "timeout": 2000,
             "slow": 75,
             "retries": -1,
-            "currentRetry": 0,
-            "enableTimeouts": true
+            "currentRetry": 0
           },
           {
             "title": "failing test",
@@ -122,7 +118,6 @@ mocha testfile.js --reporter mocha-json-serialize-reporter -O stats=false -O spa
             "slow": 75,
             "retries": -1,
             "currentRetry": 0,
-            "enableTimeouts": true,
             "err": {
               "stack": "Error: FAIL\n    at Context.<anonymous> (test/fixtures/mocha-test-simple.fixture.js:7:11)\n    at processImmediate (internal/timers.js:439:21)",
               "message": "FAIL",
@@ -140,8 +135,7 @@ mocha testfile.js --reporter mocha-json-serialize-reporter -O stats=false -O spa
             "timeout": 2000,
             "slow": 75,
             "retries": -1,
-            "currentRetry": 0,
-            "enableTimeouts": true
+            "currentRetry": 0
           }
         ]
       }
