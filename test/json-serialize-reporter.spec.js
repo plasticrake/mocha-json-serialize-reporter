@@ -66,7 +66,7 @@ function runReporter(reporterOptions, files, fn) {
           objOutput = String(err);
         }
 
-        runner.dispose();
+        if (typeof runner.dispose === 'function') runner.dispose();
 
         fn({
           runner: runner,
