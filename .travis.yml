@@ -3,6 +3,7 @@ node_js:
   - 'node'
   - 'lts/*'
 env:
+  - MOCHA_VERSION=8
   - MOCHA_VERSION=7
   - MOCHA_VERSION=6
   - MOCHA_VERSION=5
