@@ -66,6 +66,8 @@ function runReporter(reporterOptions, files, fn) {
           objOutput = String(err);
         }
 
+        runner.dispose();
+
         fn({
           runner: runner,
           jsonOutput: jsonOutput,
@@ -106,8 +108,6 @@ describe('JsonSerializeReporter', function () {
       runReporter({}, ['./fixtures/mocha-test-hooks.fixture.js'], function (
         out
       ) {
-        runner = out.runner;
-
         suiteWithBeforeEachHook = out.objOutput.suite.suites[0];
         suiteWithBeforeHook = out.objOutput.suite.suites[1];
         suiteWithAfterEachHook = out.objOutput.suite.suites[2];
