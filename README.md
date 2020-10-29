@@ -6,7 +6,7 @@
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/plasticrake/mocha-json-serialize-reporter.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/plasticrake/mocha-json-serialize-reporter/alerts/)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/plasticrake/mocha-json-serialize-reporter.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/plasticrake/mocha-json-serialize-reporter/context:javascript)
 
-**A comprehensive JSON reporter for [Mocha.js](https://mochajs.org/)**
+☕️ **A comprehensive JSON reporter for [Mocha.js](https://mochajs.org/)** ☕️
 
 Output can be used with [mocha-json-runner](https://github.com/plasticrake/mocha-json-runner) to "replay" test results using another mocha reporter.
 
