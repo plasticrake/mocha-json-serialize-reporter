@@ -105,21 +105,23 @@ describe('JsonSerializeReporter', function () {
     var suiteWithFailingAfterHook;
 
     beforeEach(function (done) {
-      runReporter({}, ['./fixtures/mocha-test-hooks.fixture.js'], function (
-        out
-      ) {
-        suiteWithBeforeEachHook = out.objOutput.suite.suites[0];
-        suiteWithBeforeHook = out.objOutput.suite.suites[1];
-        suiteWithAfterEachHook = out.objOutput.suite.suites[2];
-        suiteWithAfterHook = out.objOutput.suite.suites[3];
+      runReporter(
+        {},
+        ['./fixtures/mocha-test-hooks.fixture.js'],
+        function (out) {
+          suiteWithBeforeEachHook = out.objOutput.suite.suites[0];
+          suiteWithBeforeHook = out.objOutput.suite.suites[1];
+          suiteWithAfterEachHook = out.objOutput.suite.suites[2];
+          suiteWithAfterHook = out.objOutput.suite.suites[3];
 
-        suiteWithFailingBeforeEachHook = out.objOutput.suite.suites[4];
-        suiteWithFailingBeforeHook = out.objOutput.suite.suites[5];
-        suiteWithFailingAfterEachHook = out.objOutput.suite.suites[6];
-        suiteWithFailingAfterHook = out.objOutput.suite.suites[7];
+          suiteWithFailingBeforeEachHook = out.objOutput.suite.suites[4];
+          suiteWithFailingBeforeHook = out.objOutput.suite.suites[5];
+          suiteWithFailingAfterEachHook = out.objOutput.suite.suites[6];
+          suiteWithFailingAfterHook = out.objOutput.suite.suites[7];
 
-        done();
-      });
+          done();
+        }
+      );
     });
 
     it('should have output', function () {
@@ -231,14 +233,15 @@ describe('JsonSerializeReporter', function () {
       });
 
       ['false', 'no', 'off', '0'].forEach(function (val) {
-        it('should not have stats when stats is "' + val + '"', function (
-          done
-        ) {
-          runReporter({ stats: val }, [], function (out) {
-            expect(out.objOutput).to.not.have.property('stats');
-            done();
-          });
-        });
+        it(
+          'should not have stats when stats is "' + val + '"',
+          function (done) {
+            runReporter({ stats: val }, [], function (out) {
+              expect(out.objOutput).to.not.have.property('stats');
+              done();
+            });
+          }
+        );
       });
     });
 
