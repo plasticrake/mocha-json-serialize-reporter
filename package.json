@@ -24,7 +24,7 @@
   "scripts": {
     "lint": "eslint .",
     "release": "standard-version --sign",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "coverage-report-lcov": "nyc report --reporter=lcov",
     "test": "nyc mocha"
   },
   "devDependencies": {

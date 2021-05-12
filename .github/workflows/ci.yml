@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Setup cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: npm install
+        run: |
+          npm ci
+
+      - name: Lint
+        run: |
+          npm run lint
+
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: ['12', '14', '16']
+        mocha-version: ['4', '5', '6', '7', '8']
+        include:
+          # mocha v6 does not run on node v4
+          - os: ubuntu-latest
+            node-version: '4'
+            mocha-version: '4'
+          - os: ubuntu-latest
+            node-version: '4'
+            mocha-version: '5'
+          - os: ubuntu-latest
+            node-version: '14'
+            mocha-version: '8'
+            coverage: true
+
+    name: 'Test, node: ${{ matrix.node-version }} mocha: ${{ matrix.mocha-version }} coverage: ${{ matrix.coverage }}}'
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Setup cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-mocha${{ matrix.mocha-version }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-mocha${{ matrix.mocha-version }}-
+
+      # npm ci is not supported on node v4
+      - name: npm install (node v4)
+        if: ${{ matrix.node-version == 4 }}
+        run: |
+          npm install
+          npm install mocha@${{ matrix.mocha-version }}
+
+      - name: npm install
+        if: ${{ matrix.node-version > 4 }}
+        run: |
+          npm ci
+          npm install mocha@${{ matrix.mocha-version }}
+
+      # nyc is not supported on node < v8
+      - name: test (node < v8)
+        if: ${{ matrix.node-version < 8 }}
+        run: |
+          ./node_modules/.bin/mocha
+
+      - name: test
+        if: ${{ matrix.node-version >= 8 }}
+        run: |
+          npm run test
+
+      - name: Generate Coverage Report
+        if: ${{ matrix.coverage }}
+        run: npm run coverage-report-lcov
+
+      - name: Upload Coverage to Coveralls
+        if: ${{ matrix.coverage }}
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+
+      - name: Upload Coverage to Codecov
+        if: ${{ matrix.coverage }}
+        uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true
