@@ -35,6 +35,7 @@ var mocha = new Mocha({
 - `stats` \[boolean\] \[default: true\] include stats in output.
 - `space` \[number\] \[default: 2\] `JSON.stringify` space parameter.
 - `replacer` \[Function\] \[default: null\] `JSON.stringify` replacer function. This is only usable programmatically, not via command line.
+- `callback` \[Function\] \[default: null\] Function called with JSON results after mocha completes. If specified results will not be output to stdout. This is only usable programmatically, not via command line.
 
 Example:
 

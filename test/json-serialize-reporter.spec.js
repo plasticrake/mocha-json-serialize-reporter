@@ -294,6 +294,27 @@ describe('JsonSerializeReporter', function () {
         });
       });
     });
+
+    describe('callback', function () {
+      it('should call callback when specified', function (done) {
+        var callback = function (results) {
+          expect(results).to.contain('suite');
+        };
+        runReporter({ callback: callback }, [], function (out) {
+          expect(out.jsonOutput).to.eq('');
+          done();
+        });
+      });
+
+      [99, new Date(), 'not a function', {}].forEach(function (val) {
+        it('should ignore non-functions: "' + val + '"', function (done) {
+          runReporter({ callback: val }, [], function (out) {
+            expect(out.objOutput).to.have.property('suite');
+            done();
+          });
+        });
+      });
+    });
   });
 
   describe('suites', function () {
