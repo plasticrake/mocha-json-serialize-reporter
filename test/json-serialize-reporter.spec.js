@@ -449,8 +449,8 @@ describe('JsonSerializeReporter', function () {
     it('should match single test', function () {
       expect(objOutput.stats.tests).to.eql(1);
 
-      var tests = getTests(objOutput.suite, function () {
-        return true;
+      var tests = getTests(objOutput.suite, function (test) {
+        return test.state != null;
       });
 
       expect(tests).to.have.lengthOf(1);
