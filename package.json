@@ -18,16 +18,20 @@
   "license": "MIT",
   "author": "Patrick Seal",
   "main": "lib/json-serialize-reporter.js",
+  "browser": "dist/mocha-json-serialize-reporter.js",
   "files": [
+    "dist",
     "lib"
   ],
   "scripts": {
+    "build": "rollup -c",
+    "coverage-report-lcov": "nyc report --reporter=lcov",
     "lint": "eslint .",
     "release": "standard-version --sign",
-    "coverage-report-lcov": "nyc report --reporter=lcov",
     "test": "nyc mocha"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^19.0.0",
     "chai": "^4.3.4",
     "codecov": "^3.8.2",
     "eslint": "^7.26.0",
@@ -38,6 +42,8 @@
     "mocha": ">=4",
     "nyc": "^15.1.0",
     "prettier": "2.3.0",
+    "rollup": "^2.47.0",
+    "rollup-plugin-external-globals": "^0.6.1",
     "sinon": "^7.5.0",
     "standard-version": "^9.3.0"
   },
