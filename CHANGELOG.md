@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/plasticrake/mocha-json-serialize-reporter/compare/v1.3.0...v1.4.0) (2021-05-15)
+
+
+### Features
+
+* add callback option ([#22](https://github.com/plasticrake/mocha-json-serialize-reporter/issues/22)) ([95350bc](https://github.com/plasticrake/mocha-json-serialize-reporter/commit/95350bccbb554d399d8842f077c969c922f88c1a))
+* exclude pending tests when not run via grep ([#23](https://github.com/plasticrake/mocha-json-serialize-reporter/issues/23)) ([6e93175](https://github.com/plasticrake/mocha-json-serialize-reporter/commit/6e931752bda99ef7a54d37c6233f93cb334b6f69))
+
 ## [1.3.0](https://github.com/plasticrake/mocha-json-serialize-reporter/compare/v1.2.0...v1.3.0) (2020-10-29)
 
 
