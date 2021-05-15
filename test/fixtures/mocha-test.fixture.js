@@ -126,12 +126,18 @@ describe('suites with hooks', function () {
 
     it('passing test', function () {});
 
+    it('passing test 2', function () {});
+
     it('failing test', function () {
       throw new Error('FAIL');
     });
 
     it('skipped test', function () {
       this.skip();
+    });
+
+    describe('child suite', function () {
+      it('passing test', function () {});
     });
   });
 
@@ -142,12 +148,18 @@ describe('suites with hooks', function () {
 
     it('passing test', function () {});
 
+    it('passing test 2', function () {});
+
     it('failing test', function () {
       throw new Error('FAIL');
     });
 
     it('skipped test', function () {
       this.skip();
+    });
+
+    describe('child suite', function () {
+      it('passing test', function () {});
     });
   });
 
@@ -161,12 +173,18 @@ describe('suites with hooks', function () {
 
     it('passing test', function () {});
 
+    it('passing test 2', function () {});
+
     it('failing test', function () {
       throw new Error('FAIL');
     });
 
     it('skipped test', function () {
       this.skip();
+    });
+
+    describe('child suite', function () {
+      it('passing test', function () {});
     });
   });
 
@@ -177,6 +195,8 @@ describe('suites with hooks', function () {
 
     it('passing test', function () {});
 
+    it('passing test2', function () {});
+
     it('failing test', function () {
       throw new Error('FAIL');
     });
@@ -184,7 +204,22 @@ describe('suites with hooks', function () {
     it('skipped test', function () {
       this.skip();
     });
+
+    describe('child suite', function () {
+      it('passing test', function () {});
+    });
   });
+});
+
+describe('suite grep test', function () {
+  it('grep test A', function () {});
+
+  it('grep test B', function () {});
+
+  it('test this.skip()', function () {
+    this.skip();
+  });
+  it.skip('test it.skip()', function () {});
 });
 
 describe('empty suite', function () {});

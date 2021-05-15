@@ -63,12 +63,18 @@ describe('suite with failing beforeEach hook', function () {
 
   it('passing test', function () {});
 
+  it('passing test 2', function () {});
+
   it('failing test', function () {
     throw new Error('FAIL');
   });
 
   it('skipped test', function () {
     this.skip();
+  });
+
+  describe('child suite', function () {
+    it('passing test', function () {});
   });
 });
 
@@ -79,12 +85,18 @@ describe('suite with failing before hook', function () {
 
   it('passing test', function () {});
 
+  it('passing test 2', function () {});
+
   it('failing test', function () {
     throw new Error('FAIL');
   });
 
   it('skipped test', function () {
     this.skip();
+  });
+
+  describe('child suite', function () {
+    it('passing test', function () {});
   });
 });
 
@@ -98,12 +110,18 @@ describe('suite with failing afterEach hook', function () {
 
   it('passing test', function () {});
 
+  it('passing test 2', function () {});
+
   it('failing test', function () {
     throw new Error('FAIL');
   });
 
   it('skipped test', function () {
     this.skip();
+  });
+
+  describe('child suite', function () {
+    it('passing test', function () {});
   });
 });
 
@@ -114,11 +132,17 @@ describe('suite with failing after hook', function () {
 
   it('passing test', function () {});
 
+  it('passing test2', function () {});
+
   it('failing test', function () {
     throw new Error('FAIL');
   });
 
   it('skipped test', function () {
     this.skip();
+  });
+
+  describe('child suite', function () {
+    it('passing test', function () {});
   });
 });

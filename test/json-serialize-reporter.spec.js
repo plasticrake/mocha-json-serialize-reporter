@@ -11,6 +11,14 @@ var JsonSerializeReporter = require('../lib/json-serialize-reporter');
 var STATE_FAILED = 'failed';
 var STATE_PASSED = 'passed';
 
+// Mocha starting with version 6 provides `Mocha.prototype.version`
+var MOCHA_VERSION = '';
+var MOCHA_VERSION_MAJOR = '';
+if (Mocha.prototype.version != null) {
+  MOCHA_VERSION = Mocha.prototype.version;
+  MOCHA_VERSION_MAJOR = MOCHA_VERSION.split('.')[0];
+}
+
 function getTests(suite, matchFn) {
   var matchingTests = [];
 
@@ -36,8 +44,8 @@ function dateReviver(key, value) {
   return value;
 }
 
-function runReporter(reporterOptions, files, fn) {
-  var mocha = new Mocha();
+function runReporter(mochaOptions, reporterOptions, files, fn) {
+  var mocha = new Mocha(mochaOptions);
   mocha.reporter(JsonSerializeReporter, reporterOptions);
 
   if (files && files.length > 0) {
@@ -86,7 +94,7 @@ describe('JsonSerializeReporter', function () {
   var objOutput;
 
   beforeEach(function (done) {
-    runReporter({}, ['./fixtures/mocha-test.fixture.js'], function (out) {
+    runReporter({}, {}, ['./fixtures/mocha-test.fixture.js'], function (out) {
       runner = out.runner;
       objOutput = out.objOutput;
       done();
@@ -106,6 +114,7 @@ describe('JsonSerializeReporter', function () {
 
     beforeEach(function (done) {
       runReporter(
+        {},
         {},
         ['./fixtures/mocha-test-hooks.fixture.js'],
         function (out) {
@@ -155,12 +164,7 @@ describe('JsonSerializeReporter', function () {
     });
 
     it('failures should have originalTitle (Mocha >= v6)', function () {
-      if (
-        !(
-          Mocha.prototype.version &&
-          Number(Mocha.prototype.version.substring(0, 1)) >= 6
-        )
-      ) {
+      if (!(MOCHA_VERSION_MAJOR >= 6)) {
         this.skip();
       }
 
@@ -201,14 +205,14 @@ describe('JsonSerializeReporter', function () {
   describe('options', function () {
     describe('stats', function () {
       it('should include stats by default', function (done) {
-        runReporter(undefined, [], function (out) {
+        runReporter({}, undefined, [], function (out) {
           expect(out.objOutput).to.have.property('stats').and.to.exist;
           done();
         });
       });
 
       it('should include stats when stats is true', function (done) {
-        runReporter({ stats: true }, [], function (out) {
+        runReporter({}, { stats: true }, [], function (out) {
           expect(out.objOutput).to.have.property('stats').and.to.exist;
           done();
         });
@@ -218,7 +222,7 @@ describe('JsonSerializeReporter', function () {
         val
       ) {
         it('should include stats when stats is "' + val + '"', function (done) {
-          runReporter({ stats: val }, [], function (out) {
+          runReporter({}, { stats: val }, [], function (out) {
             expect(out.objOutput).to.have.property('stats').and.to.exist;
             done();
           });
@@ -226,7 +230,7 @@ describe('JsonSerializeReporter', function () {
       });
 
       it('should not have stats when stats is false', function (done) {
-        runReporter({ stats: false }, [], function (out) {
+        runReporter({}, { stats: false }, [], function (out) {
           expect(out.objOutput).to.not.have.property('stats');
           done();
         });
@@ -236,7 +240,7 @@ describe('JsonSerializeReporter', function () {
         it(
           'should not have stats when stats is "' + val + '"',
           function (done) {
-            runReporter({ stats: val }, [], function (out) {
+            runReporter({}, { stats: val }, [], function (out) {
               expect(out.objOutput).to.not.have.property('stats');
               done();
             });
@@ -247,7 +251,7 @@ describe('JsonSerializeReporter', function () {
 
     describe('space', function () {
       it('should default to 2', function (done) {
-        runReporter(undefined, [], function (out) {
+        runReporter({}, undefined, [], function (out) {
           expect(out.jsonOutput).to.contain(
             '{\n  "suite": {\n    "title": "",\n'
           );
@@ -256,7 +260,7 @@ describe('JsonSerializeReporter', function () {
       });
 
       it('should default to 2 with an invalid number', function (done) {
-        runReporter({ space: 'INVALID' }, [], function (out) {
+        runReporter({}, { space: 'INVALID' }, [], function (out) {
           expect(out.jsonOutput).to.contain(
             '{\n  "suite": {\n    "title": "",\n'
           );
@@ -265,7 +269,7 @@ describe('JsonSerializeReporter', function () {
       });
 
       it('should allow overrides', function (done) {
-        runReporter({ space: 0 }, [], function (out) {
+        runReporter({}, { space: 0 }, [], function (out) {
           expect(out.jsonOutput).to.match(/{"suite":{"title":""/);
           done();
         });
@@ -280,7 +284,7 @@ describe('JsonSerializeReporter', function () {
           }
           return value;
         };
-        runReporter({ replacer: replacer }, [], function (out) {
+        runReporter({}, { replacer: replacer }, [], function (out) {
           expect(out.objOutput.stats).to.eql('OVERRIDE');
           done();
         });
@@ -288,7 +292,7 @@ describe('JsonSerializeReporter', function () {
 
       [99, new Date(), 'not a function', {}].forEach(function (val) {
         it('should ignore non-functions: "' + val + '"', function (done) {
-          runReporter({ replacer: val }, [], function () {
+          runReporter({}, { replacer: val }, [], function () {
             done();
           });
         });
@@ -300,7 +304,7 @@ describe('JsonSerializeReporter', function () {
         var callback = function (results) {
           expect(results).to.contain('suite');
         };
-        runReporter({ callback: callback }, [], function (out) {
+        runReporter({}, { callback: callback }, [], function (out) {
           expect(out.jsonOutput).to.eq('');
           done();
         });
@@ -308,7 +312,7 @@ describe('JsonSerializeReporter', function () {
 
       [99, new Date(), 'not a function', {}].forEach(function (val) {
         it('should ignore non-functions: "' + val + '"', function (done) {
-          runReporter({ callback: val }, [], function (out) {
+          runReporter({}, { callback: val }, [], function (out) {
             expect(out.objOutput).to.have.property('suite');
             done();
           });
@@ -320,6 +324,14 @@ describe('JsonSerializeReporter', function () {
   describe('suites', function () {
     var suites;
 
+    function hookHasFailure(hooks) {
+      if (hooks == null) return false;
+      for (var i = 0; i < hooks.length; i += 1) {
+        if (hooks[i].state === 'failed') return true;
+      }
+      return false;
+    }
+
     function getSuites(suites, matchFn) {
       var matchingSuites = [];
 
@@ -327,6 +339,13 @@ describe('JsonSerializeReporter', function () {
         if (suite == null) return;
 
         if (matchFn(suite)) matchingSuites.push(suite);
+
+        if (
+          hookHasFailure(suite._beforeAll) ||
+          hookHasFailure(suite._beforeEach) ||
+          hookHasFailure(suite._afterEach)
+        )
+          return;
 
         if (suite.suites != null) {
           Array.prototype.push.apply(
@@ -341,6 +360,7 @@ describe('JsonSerializeReporter', function () {
 
     before(function () {
       // root suite and empty suites are not counted in stats
+      // suites with parents with failing hooks are not counted
       suites = getSuites(objOutput.suite.suites, function (s) {
         // walk the tree and see if we find a test
         return (
@@ -391,9 +411,9 @@ describe('JsonSerializeReporter', function () {
       expect(pending).lengthOf(objOutput.stats.pending);
     });
 
-    it('should have 10 failures', function () {
+    it('should have 9 failures', function () {
       // This won't match stats when suites have failing hooks
-      expect(failures).lengthOf(10);
+      expect(failures).lengthOf(9);
     });
 
     describe('failures', function () {
@@ -411,12 +431,39 @@ describe('JsonSerializeReporter', function () {
     });
   });
 
+  describe('grep', function () {
+    var objOutput;
+
+    before(function (done) {
+      runReporter(
+        { grep: 'test three' },
+        {},
+        ['./fixtures/mocha-test.fixture.js'],
+        function (out) {
+          objOutput = out.objOutput;
+          done();
+        }
+      );
+    });
+
+    it('should match single test', function () {
+      expect(objOutput.stats.tests).to.eql(1);
+
+      var tests = getTests(objOutput.suite, function (test) {
+        return test.state != null;
+      });
+
+      expect(tests).to.have.lengthOf(1);
+      expect(tests[0].title).to.eql('test three');
+    });
+  });
+
   describe('No Tests', function () {
     var runner;
     var objOutput;
 
     before(function (done) {
-      runReporter({}, [], function (out) {
+      runReporter({}, {}, [], function (out) {
         runner = out.runner;
         objOutput = out.objOutput;
         done();
