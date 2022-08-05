@@ -22,7 +22,7 @@
     "lib"
   ],
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint --ignore-path .gitignore .",
     "release": "standard-version --sign",
     "coverage-report-lcov": "nyc report --reporter=lcov",
     "test": "nyc mocha"
