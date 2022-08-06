@@ -12,20 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Use Node.js 14
-        uses: actions/setup-node@v2
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
         with:
-          node-version: '14'
-
-      - name: Setup cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: '16'
+          cache: 'npm'
 
       - name: npm install
         run: |
@@ -35,12 +28,12 @@ jobs:
         run: |
           npm run lint
 
-  build:
+  test:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node-version: ['12', '14', '16']
-        mocha-version: ['4', '5', '6', '7', '8']
+        node-version: ['14', '16', '18']
+        mocha-version: ['4', '5', '6', '7', '8', '9', '10']
         include:
           # mocha v6 does not run on node v4
           - os: ubuntu-latest
@@ -49,31 +42,20 @@ jobs:
           - os: ubuntu-latest
             node-version: '4'
             mocha-version: '5'
-          - os: ubuntu-latest
-            node-version: '14'
-            mocha-version: '8'
-            coverage: true
 
-    name: 'Test, node: ${{ matrix.node-version }} mocha: ${{ matrix.mocha-version }} coverage: ${{ matrix.coverage }}}'
+    name: 'Test, node: ${{ matrix.node-version }} mocha: ${{ matrix.mocha-version }}'
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-
-      - name: Setup cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-mocha${{ matrix.mocha-version }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-mocha${{ matrix.mocha-version }}-
+          cache: 'npm'
 
       # npm ci is not supported on node v4
       - name: npm install (node v4)
@@ -100,17 +82,23 @@ jobs:
           npm run test
 
       - name: Generate Coverage Report
-        if: ${{ matrix.coverage }}
+        if: ${{ matrix.node-version >= 8 }}
         run: npm run coverage-report-lcov
 
       - name: Upload Coverage to Coveralls
-        if: ${{ matrix.coverage }}
+        if: ${{ matrix.node-version >= 8 }}
         uses: coverallsapp/github-action@master
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
+          flag-name: ${{ runner.os }}-node-${{ matrix.node-version }}-mocha-${{ matrix.mocha-version }}
+          parallel: true
 
-      - name: Upload Coverage to Codecov
-        if: ${{ matrix.coverage }}
-        uses: codecov/codecov-action@v1
+  finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@master
         with:
-          fail_ci_if_error: true
+          github-token: ${{ secrets.github_token }}
+          parallel-finished: true
