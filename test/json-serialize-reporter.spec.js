@@ -8,6 +8,8 @@ var sinon = require('sinon');
 
 var JsonSerializeReporter = require('../lib/json-serialize-reporter');
 
+var sandbox = sinon.createSandbox();
+
 var STATE_FAILED = 'failed';
 var STATE_PASSED = 'passed';
 
@@ -44,6 +46,8 @@ function dateReviver(key, value) {
   return value;
 }
 
+var stdout = [];
+
 function runReporter(mochaOptions, reporterOptions, files, fn) {
   var mocha = new Mocha(mochaOptions);
   mocha.reporter(JsonSerializeReporter, reporterOptions);
@@ -55,15 +59,15 @@ function runReporter(mochaOptions, reporterOptions, files, fn) {
     });
   }
 
-  var stdout = [];
-  sinon.stub(process.stdout, 'write').callsFake(function (o) {
+  sandbox.stub(process.stdout, 'write').callsFake(function (o) {
     stdout.push(o);
   });
 
   try {
     var runner = mocha.run(function () {
-      sinon.restore();
+      sandbox.restore();
       var jsonOutput = stdout.join('\n');
+      stdout = [];
 
       setTimeout(function () {
         // setTimeout used so runner will have a value
@@ -84,10 +88,15 @@ function runReporter(mochaOptions, reporterOptions, files, fn) {
       }, 0);
     });
   } catch (err) {
-    sinon.restore();
+    sandbox.restore();
     throw err;
   }
 }
+
+after(function () {
+  sandbox.restore();
+  if (stdout.length > 0) process.stdout.write(stdout.join('\n'));
+});
 
 describe('JsonSerializeReporter', function () {
   var runner;
