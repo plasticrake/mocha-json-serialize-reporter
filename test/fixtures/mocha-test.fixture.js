@@ -20,6 +20,14 @@ describe('suite one', function () {
     throw err;
   });
 
+  it('test that fails with toJSON() Error', function () {
+    var err = new Error('FAIL');
+    err.toJSON = function () {
+      throw new Error('throwing a toJSON error');
+    };
+    throw err;
+  });
+
   it('test that is skipped', function () {
     this.skip();
   });
