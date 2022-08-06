@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/plasticrake/mocha-json-serialize-reporter/compare/v1.4.1...v1.5.0) (2022-08-06)
+
+
+### Features
+
+* handle error objects with toJSON that throws ([465a741](https://github.com/plasticrake/mocha-json-serialize-reporter/commit/465a74176a53434d1a69b2045d703c9580a92b28))
+
 ### [1.4.1](https://github.com/plasticrake/mocha-json-serialize-reporter/compare/v1.4.0...v1.4.1) (2022-06-26)
 
 ## [1.4.0](https://github.com/plasticrake/mocha-json-serialize-reporter/compare/v1.3.0...v1.4.0) (2021-05-15)
