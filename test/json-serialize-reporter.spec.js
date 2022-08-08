@@ -420,9 +420,9 @@ describe('JsonSerializeReporter', function () {
       expect(pending).lengthOf(objOutput.stats.pending);
     });
 
-    it('should have 10 failures', function () {
+    it('should have 11 failures', function () {
       // This won't match stats when suites have failing hooks
-      expect(failures).lengthOf('10');
+      expect(failures).lengthOf('11');
     });
 
     describe('failures', function () {

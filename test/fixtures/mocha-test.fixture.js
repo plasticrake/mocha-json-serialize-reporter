@@ -28,6 +28,17 @@ describe('suite one', function () {
     throw err;
   });
 
+  it('test that fails with toJSON() Error (property)', function () {
+    var err = new Error('FAIL');
+    err.customProp = {
+      value: 'hello',
+      toJSON: function () {
+        throw new Error('throwing a toJSON error');
+      },
+    };
+    throw err;
+  });
+
   it('test that is skipped', function () {
     this.skip();
   });
