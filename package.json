@@ -1,6 +1,6 @@
 {
   "name": "mocha-json-serialize-reporter",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "A comprehensive JSON reporter for Mocha.js",
   "keywords": [
     "mocha",
