@@ -31,12 +31,16 @@ var mocha = new Mocha({
 });
 ```
 
+## Running in Browser
+
+See [browser-test-console.html](https://github.com/plasticrake/mocha-json-serialize-reporter/blob/master/test/browser-test-console.html) and [browser-test-div.html](https://github.com/plasticrake/mocha-json-serialize-reporter/blob/master/test/browser-test-console.html) for examples.
+
 ### Options
 
 - `stats` \[boolean\] \[default: true\] include stats in output.
 - `space` \[number\] \[default: 2\] `JSON.stringify` space parameter.
 - `replacer` \[Function\] \[default: null\] `JSON.stringify` replacer function. This is only usable programmatically, not via command line.
-- `callback` \[Function\] \[default: null\] Function called with JSON results after mocha completes. If specified results will not be output to stdout. This is only usable programmatically, not via command line.
+- `callback` \[Function\] \[default: null\] Function called with JSON results after mocha completes. If specified results will not be output to stdout. This is only usable programmatically or in browser, not via command line.
 
 Example:
 
