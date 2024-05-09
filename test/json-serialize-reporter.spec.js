@@ -227,16 +227,19 @@ describe('JsonSerializeReporter', function () {
         });
       });
 
-      ['true', 'yes', 'on', '1', 'literally anything else'].forEach(function (
-        val
-      ) {
-        it('should include stats when stats is "' + val + '"', function (done) {
-          runReporter({}, { stats: val }, [], function (out) {
-            expect(out.objOutput).to.have.property('stats').and.to.exist;
-            done();
-          });
-        });
-      });
+      ['true', 'yes', 'on', '1', 'literally anything else'].forEach(
+        function (val) {
+          it(
+            'should include stats when stats is "' + val + '"',
+            function (done) {
+              runReporter({}, { stats: val }, [], function (out) {
+                expect(out.objOutput).to.have.property('stats').and.to.exist;
+                done();
+              });
+            }
+          );
+        }
+      );
 
       it('should not have stats when stats is false', function (done) {
         runReporter({}, { stats: false }, [], function (out) {
