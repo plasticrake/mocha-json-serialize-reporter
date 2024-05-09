@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mocha Tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+  </head>
+  <body>
+    <h1>Mocha Callback Example</h1>
+    <div id="mocha" style="white-space: pre;"></div>
+
+    <script src="https://unpkg.com/mocha/mocha.js"></script>
+    <script src="../dist/mocha-json-serialize-reporter.umd.js"></script>
+
+    <script class="mocha-init">
+      mocha.setup({
+        ui: 'bdd',
+        reporter: MochaJsonSerializeReporter,
+      });
+      mocha.options.reporterOptions = {
+        callback: (results) => {
+          const mochaDiv = document.getElementById('mocha');
+          mochaDiv.appendChild(document.createTextNode(results));
+        },
+      };
+      debugger;
+      mocha.checkLeaks();
+    </script>
+    <script src="fixtures/mocha-test-browser.fixture.js"></script>
+    <script class="mocha-exec">
+      mocha.run();
+    </script>
+  </body>
+</html>
