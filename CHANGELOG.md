@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/plasticrake/mocha-json-serialize-reporter/compare/v1.6.0...v1.7.0) (2024-05-09)
+
+
+### Features
+
+* add support for running in browser ([#20](https://github.com/plasticrake/mocha-json-serialize-reporter/issues/20)) ([d2ebe24](https://github.com/plasticrake/mocha-json-serialize-reporter/commit/d2ebe24ba5169b99e67f2bdb406062fb8f518f60))
+
 ## [1.6.0](https://github.com/plasticrake/mocha-json-serialize-reporter/compare/v1.5.0...v1.6.0) (2022-08-08)
 
 
