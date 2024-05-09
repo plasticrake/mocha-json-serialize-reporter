@@ -14,10 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Use Node.js 16
+      - name: Use Node.js 20
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '20'
           cache: 'npm'
 
       - name: npm install
@@ -32,7 +32,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node-version: ['14', '16', '18']
+        node-version: ['14', '16', '18', '20']
         mocha-version: ['4', '5', '6', '7', '8', '9', '10']
         include:
           # mocha v6 does not run on node v4
@@ -61,8 +61,7 @@ jobs:
       - name: npm install (node v4)
         if: ${{ matrix.node-version == 4 }}
         run: |
-          npm install
-          npm install mocha@${{ matrix.mocha-version }}
+          npm install mocha@${{ matrix.mocha-version }} chai@4.4.1 sinon@7.5.0
 
       - name: npm install
         if: ${{ matrix.node-version > 4 }}
