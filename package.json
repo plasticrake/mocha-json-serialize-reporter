@@ -18,7 +18,7 @@
   "license": "MIT",
   "author": "Patrick Seal",
   "main": "lib/json-serialize-reporter.js",
-  "browser": "dist/mocha-json-serialize-reporter.js",
+  "browser": "dist/mocha-json-serialize-reporter.umd.js",
   "files": [
     "dist",
     "lib"
@@ -41,7 +41,7 @@
     "mocha": ">=4",
     "nyc": "^15.1.0",
     "prettier": "^3.2.5",
-    "rollup": "^2.79.1",
+    "rollup": "^4.17.2",
     "rollup-plugin-external-globals": "^0.10.0",
     "sinon": "^7.5.0",
     "standard-version": "^9.5.0"

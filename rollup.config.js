@@ -2,11 +2,12 @@
 
 var commonjs = require('@rollup/plugin-commonjs');
 var externalGlobals = require('rollup-plugin-external-globals');
+var pkg = require('./package.json');
 
 module.exports = {
   input: 'lib/json-serialize-reporter.js',
   output: {
-    file: './dist/mocha-json-serialize-reporter.js',
+    file: pkg.browser,
     name: 'MochaJsonSerializeReporter',
     format: 'umd',
   },
